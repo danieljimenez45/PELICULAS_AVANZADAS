@@ -1,5 +1,5 @@
 
-from models.Pelicula import Pelicula
+from src.models.Pelicula import Pelicula
 from sqlmodel import SQLModel, Session, create_engine
 import os
 from dotenv import load_dotenv
@@ -8,11 +8,11 @@ load_dotenv()
 
 db_user: str = os.getenv("DB_USER")  
 db_password: str = os.getenv("DB_PASSWORD")
-db_server: str = os.getenv("DB_SERVER", "db-peliculas-avanzadas")
+db_server: str = os.getenv("DB_SERVER", "localhost")
 db_port: int = int(os.getenv("DB_PORT", 5432))  
 db_name: str = os.getenv("DB_NAME", "peliculasdb")  
 
-DATABASE_URL = f"postgresql+psycopg2://{db_user}:{db_password}@{db_server}:{db_port}/{db_name}"
+DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@{db_server}:{db_port}/{db_name}"
 engine = create_engine(os.getenv("DB_URL", DATABASE_URL), echo=True)
 
 def get_session():

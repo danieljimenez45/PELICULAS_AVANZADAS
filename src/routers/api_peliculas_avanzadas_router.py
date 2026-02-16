@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException , Depends
 from sqlmodel import Session
-from data.db import get_session
+from src.data.db import get_session
 from typing import Annotated
-from data.PeliculasAvanzadasRepository import PeliculasAvanzadasRepository
-from models.Pelicula import (
+from src.data.PeliculasAvanzadasRepository import PeliculasAvanzadasRepository
+from src.models.Pelicula import (
     PeliculaCreate,
     PeliculaUpdate,
     PeliculaResponse,
