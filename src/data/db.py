@@ -1,5 +1,5 @@
 
-from src.models.Pelicula import Pelicula
+from models.Pelicula import Pelicula
 from sqlmodel import SQLModel, Session, create_engine
 import os
 from dotenv import load_dotenv
@@ -8,8 +8,8 @@ load_dotenv()
 
 db_user: str = os.getenv("DB_USER")  
 db_password: str = os.getenv("DB_PASSWORD")
-db_server: str = os.getenv("DB_SERVER", "localhost")
-db_port: int = int(os.getenv("DB_PORT", 5432))  
+db_server: str = os.getenv("DB_SERVER", "fastapi-db")
+db_port: int = int(os.getenv("DB_PORT", 3306))  
 db_name: str = os.getenv("DB_NAME", "peliculasdb")  
 
 DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@{db_server}:{db_port}/{db_name}"
@@ -29,7 +29,6 @@ def init_db():
             titulo="Interestellar",
             sinopsis="Un grupo de exploradores viaja a través de un agujero de gusano...",
             director="Christopher Nolan",
-
             genero="ciencia_ficcion",
             clasificacion="PG-13",
             duracion_min=169,

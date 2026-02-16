@@ -1,0 +1,24 @@
+name: fastapi-peliculas
+
+services: 
+  fastapi-app:  
+    build:  
+      context: .  
+      dockerfile: Dockerfile  
+    container_name: fastapi-app-peliculas
+    restart: always  
+    ports:  
+      - "8000:8000"  
+    depends_on:  
+      - fastapi-db
+        
+  fastapi-db:  
+    image: mysql 
+    container_name: fastapi-db-peliculas  
+    environment:  
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:  
+      - "3306:3306"
