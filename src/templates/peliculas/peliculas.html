@@ -1,0 +1,47 @@
+{% extends "fragments/base.html" %}
+{% block title %}Peliculas{% endblock %}
+
+{% block content %}
+<h2>Listado de películas</h2>
+<div class="table-wrap">
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Sinopsis</th>
+        <th>Director</th>
+        <th>Género</th>
+        <th>Clasificación</th>
+        <th>Duración</th>
+        <th>Presupuesto</th>
+        <th>Disponible</th>
+        <th>Fecha de estreno</th>
+        <th>Fecha de creación</th>
+        <th>Puntuación</th>
+        <th>Acciones</th>
+    </tr>
+    {% for pelicula in peliculas %}
+    <tr>
+        <td>{{ pelicula.id }}</td>
+        <td>{{ pelicula.titulo }}</td>
+        <td>{{ pelicula.sinopsis }}</td>
+        <td>{{ pelicula.director }}</td>
+        <td>{{ pelicula.genero }}</td>
+        <td>{{ pelicula.clasificacion }}</td>
+        <td>{{ pelicula.duracion_min }} min</td>
+        <td>{{ pelicula.presupuesto_millones }} M$</td>
+        <td>{{ "Sí" if pelicula.disponible else "No" }}</td>
+        <td>{{ pelicula.fecha_estreno }}</td>
+        <td>{{ pelicula.fecha_creacion }}</td>
+        <td>{{ pelicula.puntuacion }}</td>
+        <td><a href="/peliculas/{{ pelicula.id }}">Ver detalles</a></td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+<p><a href="/peliculas/new" class="btn">Nueva película</a> <a href="/" class="back-link">← Inicio</a></p>
+{% endblock %}
+
+{% block footer %}
+Autor: Daniel Jiménez
+{% endblock %}

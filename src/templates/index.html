@@ -1,0 +1,16 @@
+{% extends "fragments/base.html" %}
+{% block title %}Página index de Peliculas{% endblock %}
+
+{% block content %}
+    <h1>Web de Películas</h1>
+    <p>Gestiona tu catálogo de películas desde aquí.</p>
+    <nav class="content-nav">
+        <a href="{{ url_for('ver_peliculas') }}">Ver listado</a>
+        <a href="/peliculas/new">Nueva película</a>
+        <a href="{{ url_for('static', path='static.html') }}">Contenido estático</a>
+    </nav>
+{% endblock %}
+{% block footer %}
+FOOTER desde Index
+Autor: Daniel Jiménez
+{% endblock %}

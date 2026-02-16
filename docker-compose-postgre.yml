@@ -1,0 +1,22 @@
+name: fastapi-peliculas-avanzadas
+services: 
+  fastapi-app:  
+    build:  
+      context: .  
+      dockerfile: Dockerfile  
+    container_name: app-peliculas-avanzadas
+    restart: always  
+    ports:  
+      - "8080:8000"  
+    depends_on:  
+      - fastapi-db
+      
+  fastapi-db:  
+    image: postgres:16
+    container_name: db-peliculas-avanzadas  
+    environment:  
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:  
+      - "5432:5432"

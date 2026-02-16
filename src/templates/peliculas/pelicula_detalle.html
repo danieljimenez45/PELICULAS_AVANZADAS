@@ -1,0 +1,27 @@
+{% extends "fragments/base.html" %}
+{% block title %}Peliculas{% endblock %}
+
+{% block content %}
+<div class="pelicula-detail">
+    <h2>Detalle de la película</h2>
+    <ul class="detail-list">
+        <li><span class="label">Título</span> {{ pelicula.titulo }}</li>
+        <li><span class="label">Sinopsis</span> {{ pelicula.sinopsis }}</li>
+        <li><span class="label">Director</span> {{ pelicula.director }}</li>
+        <li><span class="label">Género</span> {{ pelicula.genero }}</li>
+        <li><span class="label">Clasificación</span> {{ pelicula.clasificacion }}</li>
+        <li><span class="label">Duración</span> {{ pelicula.duracion_min }} minutos</li>
+        <li><span class="label">Presupuesto</span> {{ pelicula.presupuesto_millones }} millones de dólares</li>
+        <li><span class="label">Disponible</span> {{ "Sí" if pelicula.disponible else "No" }}</li>
+        <li><span class="label">Fecha de estreno</span> {{ pelicula.fecha_estreno }}</li>
+        <li><span class="label">Fecha de creación</span> {{ pelicula.fecha_creacion }}</li>
+        <li><span class="label">Puntuación</span> {{ pelicula.puntuacion }}</li>
+
+    </ul>
+    <a href="/peliculas" class="back-link">← Volver a la lista</a>
+</div>
+{% endblock %}
+
+{% block footer %}
+Autor: Daniel Jiménez
+{% endblock %}
