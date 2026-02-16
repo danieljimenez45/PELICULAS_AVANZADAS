@@ -71,5 +71,17 @@ async def crear_pelicula(request: Request, session: SessionDep):
     repo.create_pelicula_avanzada(pelicula)
     return RedirectResponse(url="/peliculas", status_code=303)
 
+@app.get("/peliculas/{pelicula_id}", response_class = HTMLResponse)
+async def pelicula_por_id_html(pelicula_id: int ,request: Request, session: SessionDep):
+    repo = PeliculasAvanzadasRepository(session)
+    pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
+    if not pelicula_encontrada:
+        raise HTTPException(status_code=404, detail= "Pelicula no encontrada")
+    pelicula_response = map_pelicula_to_response(pelicula_encontrada)
+    return templates.TemplateResponse("peliculas/pelicula_detalle.html", {"request": request, "pelicula": pelicula_response })
+
+
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

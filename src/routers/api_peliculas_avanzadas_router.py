@@ -55,7 +55,9 @@ def actualizar_parcial_pelicula_avanzada(
     pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
     if not pelicula_encontrada:
         raise HTTPException(status_code=404, detail="Película no encontrada")
-    pelicula_actualizada = repo.update_pelicula_avanzada(pelicula_id, pelicula_update.dict(exclude_unset=True))
+    
+    pelicula_data = pelicula_update.model_dump(exclude_unset=True)
+    pelicula_actualizada = repo.update_pelicula(pelicula_id, pelicula_data)
     return map_pelicula_to_response(pelicula_actualizada)
 
 @router.put("/{pelicula_id}", response_model=PeliculaResponse)
@@ -68,5 +70,7 @@ def actualizar_completo_pelicula_avanzada(
     pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
     if not pelicula_encontrada:
         raise HTTPException(status_code=404, detail="Película no encontrada")
-    pelicula_actualizada = repo.update_pelicula_avanzada(pelicula_id, pelicula_update.dict())
-    return map_pelicula_to_response(pelicula_actualizada)       
+    
+    pelicula_data = pelicula_update.model_dump()
+    pelicula_actualizada = repo.update_pelicula(pelicula_id, pelicula_data)
+    return map_pelicula_to_response(pelicula_actualizada)
