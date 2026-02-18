@@ -226,6 +226,156 @@ async def pelicula_por_id_html(pelicula_id: int ,request: Request, session: Sess
     # Renderiza la plantilla con los datos de la película
     return templates.TemplateResponse("peliculas/pelicula_detalle.html", {"request": request, "pelicula": pelicula_response })
 
+@app.get("/peliculas/{pelicula_id}/edit", response_class=HTMLResponse)
+async def editar_pelicula_form(pelicula_id: int, request: Request, session: SessionDep):
+    """
+    Ruta GET que muestra el formulario HTML para editar una película existente.
+    
+    Ruta: GET /peliculas/{pelicula_id}/edit
+    
+    Args:
+        pelicula_id: ID de la película a editar (extraído de la URL).
+        request: Objeto Request de FastAPI necesario para renderizar plantillas.
+        session: Sesión de base de datos inyectada automáticamente.
+    
+    Returns:
+        HTMLResponse: Página HTML con el formulario de edición prellenado con los datos de la película.
+    
+    Raises:
+        HTTPException: Si la película no existe (404 Not Found).
+    
+    Esta ruta muestra un formulario con los datos actuales de la película para poder modificarlos.
+    """
+    repo = PeliculasAvanzadasRepository(session)
+    # Busca la película por ID
+    pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
+    # Si no existe, lanza error 404
+    if not pelicula_encontrada:
+        raise HTTPException(status_code=404, detail="Película no encontrada")
+    # Renderiza el formulario pasando la película como contexto
+    # La plantilla usa este objeto para prellenar los campos del formulario
+    return templates.TemplateResponse("peliculas/pelicula_form.html", {
+        "request": request,
+        "pelicula": pelicula_encontrada,
+        "editar": True  # Flag para indicar que es edición, no creación
+    })
+
+@app.post("/peliculas/{pelicula_id}/edit")
+async def actualizar_pelicula_html(
+    pelicula_id: int,
+    request: Request,
+    session: SessionDep,
+):
+    """
+    Ruta POST que procesa el formulario y actualiza una película existente en la BD.
+    
+    Ruta: POST /peliculas/{pelicula_id}/edit
+    
+    Args:
+        pelicula_id: ID de la película a actualizar (extraído de la URL).
+        request: Objeto Request de FastAPI que contiene los datos del formulario.
+        session: Sesión de base de datos inyectada automáticamente.
+    
+    Returns:
+        RedirectResponse: Redirige a /peliculas después de actualizar la película.
+        Status code: 303 See Other (redirección después de POST).
+    
+    Raises:
+        HTTPException: Si la película no existe (404 Not Found).
+    
+    Esta ruta recibe los datos del formulario HTML, los valida, actualiza la película
+    en la BD y redirige al listado de películas.
+    """
+    repo = PeliculasAvanzadasRepository(session)
+    # Verifica que la película existe
+    pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
+    if not pelicula_encontrada:
+        raise HTTPException(status_code=404, detail="Película no encontrada")
+    
+    # Obtiene los datos del formulario HTML (form-data)
+    form_data = await request.form()
+    
+    # Crea un diccionario con los datos a actualizar
+    # Solo incluye los campos que tienen valor
+    pelicula_data = {}
+    if form_data.get("titulo"):
+        pelicula_data["titulo"] = form_data.get("titulo")
+    if form_data.get("sinopsis"):
+        pelicula_data["sinopsis"] = form_data.get("sinopsis")
+    if form_data.get("director"):
+        pelicula_data["director"] = form_data.get("director")
+    if form_data.get("genero"):
+        pelicula_data["genero"] = form_data.get("genero")
+    if form_data.get("clasificacion"):
+        pelicula_data["clasificacion"] = form_data.get("clasificacion")
+    if form_data.get("duracion_min"):
+        pelicula_data["duracion_min"] = int(form_data.get("duracion_min", 0))
+    if form_data.get("presupuesto_millones"):
+        pelicula_data["presupuesto_millones"] = float(form_data.get("presupuesto_millones", 0))
+    # El campo disponible siempre se envía desde el select (true o false como string)
+    if "disponible" in form_data:
+        disponible_str = form_data.get("disponible", "false")
+        pelicula_data["disponible"] = disponible_str.lower() in ("true", "1", "on")
+    if form_data.get("fecha_estreno"):
+        pelicula_data["fecha_estreno"] = form_data.get("fecha_estreno")
+    if form_data.get("puntuacion"):
+        pelicula_data["puntuacion"] = float(form_data.get("puntuacion")) if form_data.get("puntuacion") else None
+    
+    # Actualiza la película en la base de datos
+    repo.update_pelicula_avanzada(pelicula_id, pelicula_data)
+    
+    # Redirige al listado de películas después de actualizar
+    return RedirectResponse(url="/peliculas", status_code=303)
+
+@app.post("/peliculas/{pelicula_id}/disponibilidad")
+async def cambiar_disponibilidad_pelicula_html(
+    pelicula_id: int,
+    request: Request,
+    session: SessionDep,
+):
+    """
+    Ruta POST que cambia el estado de disponibilidad de una película desde la interfaz web.
+    
+    Ruta: POST /peliculas/{pelicula_id}/disponibilidad
+    
+    Esta ruta recibe un formulario con el nuevo estado de disponibilidad y actualiza
+    la película en la base de datos. Luego redirige al listado de películas.
+    
+    Args:
+        pelicula_id: ID de la película a modificar (extraído de la URL).
+        request: Objeto Request de FastAPI que contiene los datos del formulario.
+        session: Sesión de base de datos inyectada automáticamente.
+    
+    Returns:
+        RedirectResponse: Redirige a /peliculas después de cambiar la disponibilidad.
+        Status code: 303 See Other (redirección después de POST).
+    
+    Raises:
+        HTTPException: Si la película no existe (404 Not Found).
+    
+    El formulario debe enviar un campo "disponible" con valor "true" o "false".
+    """
+    repo = PeliculasAvanzadasRepository(session)
+    # Verifica que la película existe
+    pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
+    if not pelicula_encontrada:
+        raise HTTPException(status_code=404, detail="Película no encontrada")
+    
+    # Obtiene los datos del formulario HTML
+    form_data = await request.form()
+    # Obtiene el valor de disponibilidad del formulario
+    # Puede venir como "true"/"false" (string) o como checkbox "on"/None
+    disponible_str = form_data.get("disponible", "false")
+    # Convierte el string a booleano
+    # Acepta "true", "True", "1", "on" como True, cualquier otra cosa como False
+    disponible = disponible_str.lower() in ("true", "1", "on")
+    
+    # Cambia la disponibilidad usando el método específico del repositorio
+    repo.cambiar_disponibilidad_pelicula(pelicula_id, disponible)
+    
+    # Redirige al listado de películas después de cambiar la disponibilidad
+    return RedirectResponse(url="/peliculas", status_code=303)
+
 # ============================================================================
 # Punto de entrada de la aplicación
 # ============================================================================

@@ -34,7 +34,16 @@
         <td>{{ pelicula.fecha_estreno }}</td>
         <td>{{ pelicula.fecha_creacion }}</td>
         <td>{{ pelicula.puntuacion }}</td>
-        <td><a href="/peliculas/{{ pelicula.id }}">Ver detalles</a></td>
+        <td>
+            <a href="/peliculas/{{ pelicula.id }}">Ver detalles</a> | 
+            <a href="/peliculas/{{ pelicula.id }}/edit">Modificar</a> | 
+            <form method="POST" action="/peliculas/{{ pelicula.id }}/disponibilidad" style="display: inline;">
+                <input type="hidden" name="disponible" value="{{ 'false' if pelicula.disponible else 'true' }}">
+                <button type="submit" style="background: none; border: none; color: #007bff; cursor: pointer; text-decoration: underline; padding: 0;">
+                    {{ 'Marcar como no disponible' if pelicula.disponible else 'Marcar como disponible' }}
+                </button>
+            </form>
+        </td>
     </tr>
     {% endfor %}
 </table>

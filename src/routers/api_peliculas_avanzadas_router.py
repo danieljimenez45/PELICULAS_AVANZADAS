@@ -243,3 +243,42 @@ def actualizar_completo_pelicula_avanzada(
     # Actualiza la película con todos los datos
     pelicula_actualizada = repo.update_pelicula_avanzada(pelicula_id, pelicula_data)
     return map_pelicula_to_response(pelicula_actualizada)
+
+@router.patch("/{pelicula_id}/disponibilidad", response_model=PeliculaResponse)
+def cambiar_disponibilidad_pelicula(
+    pelicula_id: int,
+    disponible: bool,
+    session: SessionDep,
+):
+    """
+    Endpoint PATCH que cambia el estado de disponibilidad de una película.
+    
+    Ruta completa: PATCH /api/peliculas/{pelicula_id}/disponibilidad
+    
+    Este endpoint permite cambiar rápidamente si una película está disponible o no.
+    
+    Args:
+        pelicula_id: ID de la película a modificar (extraído de la URL).
+        disponible: Nuevo estado de disponibilidad (True o False).
+                   Se puede pasar como query parameter o en el body.
+        session: Sesión de base de datos inyectada automáticamente.
+    
+    Returns:
+        Objeto PeliculaResponse con la película actualizada.
+    
+    Raises:
+        HTTPException: Si la película no existe (404 Not Found).
+    
+    Ejemplo de uso:
+        PATCH /api/peliculas/1/disponibilidad?disponible=false
+        PATCH /api/peliculas/1/disponibilidad?disponible=true
+    """
+    repo = PeliculasAvanzadasRepository(session)
+    # Verifica que la película existe
+    pelicula_encontrada = repo.get_pelicula_avanzada(pelicula_id)
+    if not pelicula_encontrada:
+        raise HTTPException(status_code=404, detail="Película no encontrada")
+    
+    # Cambia la disponibilidad usando el método específico del repositorio
+    pelicula_actualizada = repo.cambiar_disponibilidad_pelicula(pelicula_id, disponible)
+    return map_pelicula_to_response(pelicula_actualizada)

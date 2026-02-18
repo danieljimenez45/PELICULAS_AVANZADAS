@@ -2,62 +2,70 @@
 
 {% block content %}
     <div class="form-container">
-        <h1>📝 Insertar Pelicula</h1>
-        <form method="post" action="/peliculas/new">
+        <h1>📝 {{ 'Editar Película' if editar else 'Insertar Película' }}</h1>
+        <form method="post" action="{{ '/peliculas/' + pelicula.id|string + '/edit' if editar else '/peliculas/new' }}">
             <div class="form-group">
                 <label for="titulo">Título de la pelicula:</label><br>
-                <input type="text" id="titulo" name="titulo" placeholder="Nombre de la pelicula">
+                <input type="text" id="titulo" name="titulo" placeholder="Nombre de la pelicula" value="{{ pelicula.titulo if pelicula.titulo else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="sinopsis">Sinopsis:</label><br>
-                <textarea id="sinopsis" name="sinopsis" placeholder="Sinopsis de la pelicula"></textarea>
+                <textarea id="sinopsis" name="sinopsis" placeholder="Sinopsis de la pelicula">{{ pelicula.sinopsis if pelicula.sinopsis else '' }}</textarea>
             </div>
             
             <div class="form-group">
                 <label for="director">Director:</label><br>
-                <input type="text" id="director" name="director" placeholder="Director de la pelicula">
+                <input type="text" id="director" name="director" placeholder="Director de la pelicula" value="{{ pelicula.director if pelicula.director else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="genero">Género:</label><br>
-                <input type="text" id="genero" name="genero" placeholder="Género de la pelicula">
+                <input type="text" id="genero" name="genero" placeholder="Género de la pelicula" value="{{ pelicula.genero if pelicula.genero else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="clasificacion">Clasificación:</label><br>
-                <input type="text" id="clasificacion" name="clasificacion" placeholder="Clasificación de la pelicula">
+                <input type="text" id="clasificacion" name="clasificacion" placeholder="Clasificación de la pelicula" value="{{ pelicula.clasificacion if pelicula.clasificacion else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="duracion_min">Duración (minutos):</label><br>
-                <input type="number" id="duracion_min" name="duracion_min" placeholder="Duración en minutos">
+                <input type="number" id="duracion_min" name="duracion_min" placeholder="Duración en minutos" value="{{ pelicula.duracion_min if pelicula.duracion_min else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="presupuesto_millones">Presupuesto (millones de dólares):</label><br>
-                <input type="number" step="0.01" id="presupuesto_millones" name="presupuesto_millones" placeholder="Presupuesto en millones de dólares">
+                <input type="number" step="0.01" id="presupuesto_millones" name="presupuesto_millones" placeholder="Presupuesto en millones de dólares" value="{{ pelicula.presupuesto_millones if pelicula.presupuesto_millones else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="disponible">Disponible:</label><br>
                 <select id="disponible" name="disponible">
-                    <option value="true">Sí</option>
-                    <option value="false">No</option>
+                    {% if editar and pelicula.disponible %}
+                        <option value="true" selected>Sí</option>
+                        <option value="false">No</option>
+                    {% elif editar and not pelicula.disponible %}
+                        <option value="true">Sí</option>
+                        <option value="false" selected>No</option>
+                    {% else %}
+                        <option value="true" selected>Sí</option>
+                        <option value="false">No</option>
+                    {% endif %}
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="fecha_estreno">Fecha de estreno:</label><br>
-                <input type="date" id="fecha_estreno" name="fecha_estreno">
+                <input type="date" id="fecha_estreno" name="fecha_estreno" value="{{ pelicula.fecha_estreno if pelicula.fecha_estreno else '' }}">
             </div>
 
             <div class="form-group">
                 <label for="puntuacion">Puntuación:</label><br>
-                <input type="number" step="0.1" id="puntuacion" name="puntuacion" placeholder="Puntuación de la pelicula">
+                <input type="number" step="0.1" id="puntuacion" name="puntuacion" placeholder="Puntuación de la pelicula" value="{{ pelicula.puntuacion if pelicula.puntuacion else '' }}">
             </div>
 
-            <button type="submit">Guardar Pelicula</button>
+            <button type="submit">{{ 'Actualizar Película' if editar else 'Guardar Película' }}</button>
         </form>
         <br>
         <div>

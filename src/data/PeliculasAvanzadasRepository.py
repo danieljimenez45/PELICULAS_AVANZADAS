@@ -109,3 +109,27 @@ class PeliculasAvanzadasRepository:
         self.session.delete(pelicula)
         # Confirma la transacción (DELETE en la base de datos)
         self.session.commit()
+    
+    def cambiar_disponibilidad_pelicula(self, pelicula_id: int, disponible: bool) -> Pelicula:
+        """
+        Cambia el estado de disponibilidad de una película.
+        
+        Args:
+            pelicula_id: Identificador único de la película a modificar.
+            disponible: Nuevo estado de disponibilidad (True o False).
+        
+        Returns:
+            Objeto Pelicula actualizado con el nuevo estado de disponibilidad.
+        
+        Este método es más específico y eficiente que update_pelicula_avanzada
+        cuando solo se necesita cambiar la disponibilidad.
+        """
+        # Obtiene la película existente de la base de datos
+        pelicula = self.get_pelicula_avanzada(pelicula_id)
+        # Actualiza solo el campo disponible
+        pelicula.disponible = disponible
+        # Confirma la transacción (UPDATE en la base de datos)
+        self.session.commit()
+        # Actualiza el objeto con los datos finales de la BD
+        self.session.refresh(pelicula)
+        return pelicula
